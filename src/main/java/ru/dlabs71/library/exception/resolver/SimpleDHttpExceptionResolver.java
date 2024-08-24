@@ -10,6 +10,7 @@ import ru.dlabs71.library.exception.DExceptionMessageService;
 import ru.dlabs71.library.exception.dto.ErrorResponseDto;
 import ru.dlabs71.library.exception.exception.BusinessLogicServiceException;
 import ru.dlabs71.library.exception.exception.ServiceException;
+import ru.dlabs71.library.exception.exception.SpecialHttpStatusServiceException;
 import ru.dlabs71.library.exception.exception.WithoutStacktraceServiceException;
 
 /**
@@ -55,12 +56,21 @@ public class SimpleDHttpExceptionResolver extends AbstractHttpExceptionResolver 
         return super.resolveServiceException(request, exception);
     }
 
+    @Override
+    @ExceptionHandler({ SpecialHttpStatusServiceException.class })
+    protected ResponseEntity<ErrorResponseDto> resolveServiceException(
+        HttpServletRequest request,
+        SpecialHttpStatusServiceException exception
+    ) {
+        return super.resolveServiceException(request, exception);
+    }
+
     @ExceptionHandler({ FileNotFoundException.class })
     public ResponseEntity<ErrorResponseDto> resolveFileNotFoundException(
         HttpServletRequest request,
         Exception exception
     ) {
-        return super.resolveNotFoundException(request, exception);
+        return super.resolveFileNotFoundException(request, exception);
     }
 
     @Override

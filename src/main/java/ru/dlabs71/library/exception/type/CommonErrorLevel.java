@@ -9,7 +9,8 @@ package ru.dlabs71.library.exception.type;
  * @author Ivanov Danila
  * @since 1.0.0
  */
-public interface ErrorLevel {
-
-    String name();
+public enum CommonErrorLevel implements ErrorLevel {
+    ERROR,
+    WARNING,
+    INFO
 }

@@ -5,6 +5,15 @@ import lombok.NonNull;
 import lombok.Setter;
 import ru.dlabs71.library.exception.type.ErrorCode;
 
+/**
+ * <p>
+ * <div><strong>Project name:</strong> d-exception </div>
+ * <div><strong>Creation date:</strong> 2024-08-24 </div>
+ * </p>
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class ServiceException extends RuntimeException implements DException {

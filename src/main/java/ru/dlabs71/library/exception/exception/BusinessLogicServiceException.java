@@ -3,9 +3,24 @@ package ru.dlabs71.library.exception.exception;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import ru.dlabs71.library.exception.type.CommonErrorLevel;
 import ru.dlabs71.library.exception.type.ErrorCode;
 import ru.dlabs71.library.exception.type.ErrorLevel;
 
+/**
+ * Business Logic Exception - it's exception occurs then an application logic is broken for a reason of
+ * incorrect user actions or data. Usually for a client application this error displays as alert with a text.
+ * You can specify level (or type) alert with {@link ErrorCode}. Also, you can specify extra data for a
+ * client application.
+ *
+ * <p>
+ * <div><strong>Project name:</strong> d-exception </div>
+ * <div><strong>Creation date:</strong> 2024-08-24 </div>
+ * </p>
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class BusinessLogicServiceException extends ServiceException {
@@ -21,7 +36,7 @@ public class BusinessLogicServiceException extends ServiceException {
         @NonNull Throwable cause
     ) {
         super(description, errorCode, cause);
-        this.level = level != null ? level : ErrorLevel.ERROR;
+        this.level = level != null ? level : CommonErrorLevel.ERROR;
         this.data = data;
     }
 
@@ -32,7 +47,7 @@ public class BusinessLogicServiceException extends ServiceException {
         Object data
     ) {
         super(description, errorCode);
-        this.level = level != null ? level : ErrorLevel.ERROR;
+        this.level = level != null ? level : CommonErrorLevel.ERROR;
         this.data = data;
     }
 

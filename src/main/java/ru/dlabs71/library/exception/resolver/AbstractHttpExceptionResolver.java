@@ -10,23 +10,33 @@ import ru.dlabs71.library.exception.DExceptionMessageService;
 import ru.dlabs71.library.exception.dto.ErrorResponseDto;
 import ru.dlabs71.library.exception.exception.BusinessLogicServiceException;
 import ru.dlabs71.library.exception.exception.ServiceException;
+import ru.dlabs71.library.exception.exception.SpecialHttpStatusServiceException;
 import ru.dlabs71.library.exception.exception.WithoutStacktraceServiceException;
 import ru.dlabs71.library.exception.type.CommonErrorCode;
 import ru.dlabs71.library.exception.type.ErrorCode;
+import ru.dlabs71.library.exception.util.ResponseEntityHelper;
 
-
+/**
+ * <p>
+ * <div><strong>Project name:</strong> d-exception </div>
+ * <div><strong>Creation date:</strong> 2024-08-24 </div>
+ * </p>
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
+ */
 @Slf4j
 public abstract class AbstractHttpExceptionResolver {
 
     @Getter
     protected final boolean enableStacktrace;
     protected final DExceptionMessageService messageService;
-    protected final ErrorResponseServant errorResponseServant;
+    protected final ResponseEntityHelper responseEntityHelper;
 
     protected AbstractHttpExceptionResolver(boolean enableStacktrace, DExceptionMessageService messageService) {
         this.enableStacktrace = enableStacktrace;
         this.messageService = messageService;
-        this.errorResponseServant = new ErrorResponseServant(messageService);
+        this.responseEntityHelper = new ResponseEntityHelper(messageService);
     }
 
     protected ResponseEntity<ErrorResponseDto> resolveInformationException(
@@ -35,7 +45,7 @@ public abstract class AbstractHttpExceptionResolver {
     ) {
         logRequestException(request, exception);
 
-        String description = errorResponseServant.acquireMessage(exception);
+        String description = responseEntityHelper.acquireMessage(exception);
         return new ResponseEntity<>(
             ErrorResponseDto.builder()
                 .informative(true)
@@ -55,12 +65,11 @@ public abstract class AbstractHttpExceptionResolver {
     ) {
         logRequestException(request, exception);
 
-        String description = errorResponseServant.acquireMessage(exception);
+        String description = responseEntityHelper.acquireMessage(exception);
         return new ResponseEntity<>(
             ErrorResponseDto.builder()
                 .informative(false)
                 .errorCode(exception.getErrorCode())
-                .data(null)
                 .message(description)
                 .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
                 .build(),
@@ -74,12 +83,11 @@ public abstract class AbstractHttpExceptionResolver {
     ) {
         logRequestException(request, exception);
 
-        String description = errorResponseServant.acquireMessage(exception);
+        String description = responseEntityHelper.acquireMessage(exception);
         return new ResponseEntity<>(
             ErrorResponseDto.builder()
                 .informative(false)
                 .errorCode(exception.getErrorCode())
-                .data(null)
                 .message(description)
                 .stacktrace(null)
                 .build(),
@@ -87,19 +95,37 @@ public abstract class AbstractHttpExceptionResolver {
         );
     }
 
+    protected ResponseEntity<ErrorResponseDto> resolveServiceException(
+        HttpServletRequest request,
+        SpecialHttpStatusServiceException exception
+    ) {
+        logRequestException(request, exception);
+
+        String description = responseEntityHelper.acquireMessage(exception);
+        return new ResponseEntity<>(
+            ErrorResponseDto.builder()
+                .informative(false)
+                .errorCode(exception.getErrorCode())
+                .message(description)
+                .stacktrace(null)
+                .build(),
+            exception.getHttpStatus()
+        );
+    }
+
     protected ResponseEntity<ErrorResponseDto> resolveEntityNotFound(HttpServletRequest request, Exception exception) {
         logRequestException(request, exception);
-        return errorResponseServant.makeResponse(CommonErrorCode.ENTITY_NOT_FOUND, exception);
+        return responseEntityHelper.makeResponse500(CommonErrorCode.ENTITY_NOT_FOUND, exception, enableStacktrace);
     }
 
     protected ResponseEntity<ErrorResponseDto> resolveOptimisticLock(HttpServletRequest request, Exception exception) {
         logRequestException(request, exception);
-        return errorResponseServant.makeResponse(CommonErrorCode.STALE_OBJECT, exception);
+        return responseEntityHelper.makeResponse500(CommonErrorCode.STALE_OBJECT, exception, enableStacktrace);
     }
 
     protected ResponseEntity<ErrorResponseDto> resolveLockException(HttpServletRequest request, Exception exception) {
         logRequestException(request, exception);
-        return errorResponseServant.makeResponse(CommonErrorCode.LOCK_OBJECT, exception);
+        return responseEntityHelper.makeResponse500(CommonErrorCode.LOCK_OBJECT, exception, enableStacktrace);
     }
 
     protected ResponseEntity<ErrorResponseDto> resolveAccessDeniedException(
@@ -107,15 +133,25 @@ public abstract class AbstractHttpExceptionResolver {
         Exception exception
     ) {
         logRequestException(request, exception);
-        return errorResponseServant.makeResponse(CommonErrorCode.ACCESS_DENIED, HttpStatus.FORBIDDEN, exception, true);
+        return responseEntityHelper.makeResponse(
+            CommonErrorCode.ACCESS_DENIED,
+            HttpStatus.FORBIDDEN,
+            exception,
+            false
+        );
     }
 
-    protected ResponseEntity<ErrorResponseDto> resolveNotFoundException(
+    protected ResponseEntity<ErrorResponseDto> resolveFileNotFoundException(
         HttpServletRequest request,
         Exception exception
     ) {
         logRequestException(request, exception);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return responseEntityHelper.makeResponse(
+            CommonErrorCode.FILE_NOT_FOUND,
+            HttpStatus.NOT_FOUND,
+            exception,
+            false
+        );
     }
 
     protected ResponseEntity<ErrorResponseDto> resolveIOException(
@@ -137,7 +173,7 @@ public abstract class AbstractHttpExceptionResolver {
         Throwable throwable
     ) {
         logRequestException(request, throwable);
-        return errorResponseServant.makeResponse(CommonErrorCode.UNEXPECTED, throwable);
+        return responseEntityHelper.makeResponse500(CommonErrorCode.COMMON_EXCEPTION, throwable, enableStacktrace);
     }
 
     protected ResponseEntity<ErrorResponseDto> resolveDefaultException(
@@ -146,7 +182,7 @@ public abstract class AbstractHttpExceptionResolver {
         Throwable throwable
     ) {
         logRequestException(request, throwable);
-        return errorResponseServant.makeResponse(errorCode, throwable);
+        return responseEntityHelper.makeResponse500(errorCode, throwable, enableStacktrace);
     }
 
     protected ResponseEntity<ErrorResponseDto> resolveDefaultException(
@@ -154,10 +190,10 @@ public abstract class AbstractHttpExceptionResolver {
         ErrorCode errorCode,
         HttpStatus status,
         Throwable throwable,
-        boolean withoutStacktrace
+        boolean withStacktrace
     ) {
         logRequestException(request, throwable);
-        return errorResponseServant.makeResponse(errorCode, status, throwable, withoutStacktrace);
+        return responseEntityHelper.makeResponse(errorCode, status, throwable, withStacktrace);
     }
 
     protected void logRequestException(HttpServletRequest request, Throwable throwable) {
