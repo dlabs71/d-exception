@@ -3,7 +3,7 @@ package ru.dlabs71.library.exception.exception;
 import ru.dlabs71.library.exception.type.ErrorCode;
 
 /**
- * Common interface for the exception classes in project d-exception.
+ * Common interface for exception classes. All your exceptions must implement this.
  * <p>
  * <div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
@@ -14,7 +14,7 @@ import ru.dlabs71.library.exception.type.ErrorCode;
  */
 public interface DException {
 
-    String getDescription();
+    String getMessage();
 
     ErrorCode getErrorCode();
 

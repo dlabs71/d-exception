@@ -3,6 +3,7 @@ package ru.dlabs71.library.exception.type;
 import lombok.Getter;
 
 /**
+ * Error codes which is supplied the library.
  * <p>
  * <div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
@@ -25,7 +26,6 @@ public enum CommonErrorCode implements ErrorCode {
     RESOURCE_NOT_FOUND("resource.not.found.exception"),
     FILE_NOT_FOUND("file.not.found.exception"),
     IO_EXCEPTION("io.exception");
-
 
     private final String codeMessage;
 

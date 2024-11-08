@@ -6,6 +6,12 @@ import lombok.Setter;
 import ru.dlabs71.library.exception.type.ErrorCode;
 
 /**
+ * Base exception class implemented {@linkplain DException} interface.
+ * It is usually ancestor for user-defined exception classes. This exception contains a normal text message
+ * and error code. When message is not passed value the message will retrieve from errorCode (if it is specified).
+ *
+ * <p>{@see} {@link BusinessLogicServiceException}, {@link SpecialHttpStatusServiceException},
+ * {@link WithoutStacktraceServiceException}
  * <p>
  * <div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
@@ -18,19 +24,44 @@ import ru.dlabs71.library.exception.type.ErrorCode;
 @Setter
 public class ServiceException extends RuntimeException implements DException {
 
-    private String description;
+    private String message;
     private ErrorCode errorCode;
 
-    public ServiceException(String description, ErrorCode errorCode) {
-        super(description);
+    /**
+     * Constructor of the class.
+     *
+     * @param message   a message explain cause of an exception.
+     * @param errorCode special error code. It can be replacement for the message
+     *                  or an extra info field in an HTTP response body for client.
+     */
+    public ServiceException(String message, ErrorCode errorCode) {
+        super(message);
+        if (message == null && errorCode == null) {
+            throw new IllegalArgumentException("Message and ErrorCode are both null");
+        }
         this.errorCode = errorCode;
-        this.description = description;
+        this.message = message;
     }
 
-    public ServiceException(String description, ErrorCode errorCode, @NonNull Throwable cause) {
+    /**
+     * Constructor of the class.
+     *
+     * @param message   a message explain cause of an exception. If it starts with '$' then the method
+     *                  tries to get message from the messageService by a code.
+     *                  <br>For example:
+     *                  <br>If message = "Hello" then output is "Hello"
+     *                  <br>If message = "$code.greeting" then output is message by the code "code.greeting"
+     * @param errorCode special error code. It can be replacement for the message
+     *                  or an extra info field in an HTTP response body for client.
+     * @param cause     a throwable object - cause of exception
+     */
+    public ServiceException(String message, ErrorCode errorCode, @NonNull Throwable cause) {
         super(cause.getMessage(), cause);
+        if (message == null && errorCode == null) {
+            throw new IllegalArgumentException("Message and ErrorCode are both null");
+        }
         this.errorCode = errorCode;
-        this.description = description;
+        this.message = message;
     }
 
     @Override
@@ -38,16 +69,16 @@ public class ServiceException extends RuntimeException implements DException {
         return this.getMessage();
     }
 
-    public static ServiceException build(String description) {
-        return new ServiceException(description, null);
+    public static ServiceException build(String message) {
+        return new ServiceException(message, null);
     }
 
     public static ServiceException build(ErrorCode errorCode) {
         return new ServiceException(null, errorCode);
     }
 
-    public static ServiceException build(String description, Throwable throwable) {
-        return new ServiceException(description, null, throwable);
+    public static ServiceException build(String message, Throwable throwable) {
+        return new ServiceException(message, null, throwable);
     }
 
     public static ServiceException build(ErrorCode errorCode, Throwable throwable) {

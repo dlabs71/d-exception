@@ -14,6 +14,7 @@ import ru.dlabs71.library.exception.exception.SpecialHttpStatusServiceException;
 import ru.dlabs71.library.exception.exception.WithoutStacktraceServiceException;
 
 /**
+ * It's simple exception resolver who extends the {@linkplain AbstractHttpExceptionResolver} class.
  * <p>
  * <div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
@@ -23,19 +24,19 @@ import ru.dlabs71.library.exception.exception.WithoutStacktraceServiceException;
  * @since 1.0.0
  */
 @RestControllerAdvice
-public class SimpleDHttpExceptionResolver extends AbstractHttpExceptionResolver {
+public final class SimpleHttpExceptionResolver extends AbstractHttpExceptionResolver {
 
-    public SimpleDHttpExceptionResolver(boolean enableStacktrace, DExceptionMessageService messageService) {
+    public SimpleHttpExceptionResolver(boolean enableStacktrace, DExceptionMessageService messageService) {
         super(enableStacktrace, messageService);
     }
 
     @Override
     @ExceptionHandler({ BusinessLogicServiceException.class })
-    public ResponseEntity<ErrorResponseDto> resolveInformationException(
+    public ResponseEntity<ErrorResponseDto> resolveBusinessLogicException(
         HttpServletRequest request,
         BusinessLogicServiceException exception
     ) {
-        return super.resolveInformationException(request, exception);
+        return super.resolveBusinessLogicException(request, exception);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class SimpleDHttpExceptionResolver extends AbstractHttpExceptionResolver 
 
     @Override
     @ExceptionHandler({ SpecialHttpStatusServiceException.class })
-    protected ResponseEntity<ErrorResponseDto> resolveServiceException(
+    public ResponseEntity<ErrorResponseDto> resolveServiceException(
         HttpServletRequest request,
         SpecialHttpStatusServiceException exception
     ) {
@@ -84,7 +85,7 @@ public class SimpleDHttpExceptionResolver extends AbstractHttpExceptionResolver 
 
     @Override
     @ExceptionHandler({ AssertionError.class })
-    protected ResponseEntity<ErrorResponseDto> resolveAssertationError(
+    public ResponseEntity<ErrorResponseDto> resolveAssertationError(
         HttpServletRequest request,
         AssertionError error
     ) {
