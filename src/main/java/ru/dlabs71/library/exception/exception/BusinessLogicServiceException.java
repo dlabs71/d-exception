@@ -1,5 +1,6 @@
 package ru.dlabs71.library.exception.exception;
 
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -23,10 +24,10 @@ import ru.dlabs71.library.exception.type.ErrorLevel;
  */
 @Getter
 @Setter
-public class BusinessLogicServiceException extends ServiceException {
+public final class BusinessLogicServiceException extends ServiceException {
 
     private ErrorLevel level;
-    private Object data;
+    private Serializable data;
 
     /**
      * Constructor of the class.
@@ -43,7 +44,7 @@ public class BusinessLogicServiceException extends ServiceException {
         String message,
         ErrorCode errorCode,
         ErrorLevel level,
-        Object data,
+        Serializable data,
         @NonNull Throwable cause
     ) {
         super(message, errorCode, cause);
@@ -65,7 +66,7 @@ public class BusinessLogicServiceException extends ServiceException {
         String message,
         ErrorCode errorCode,
         ErrorLevel level,
-        Object data
+        Serializable data
     ) {
         super(message, errorCode);
         this.level = level != null ? level : CommonErrorLevel.ERROR;

@@ -14,18 +14,18 @@ import lombok.Getter;
  */
 @Getter
 public enum CommonErrorCode implements ErrorCode {
-    COMMON_EXCEPTION("common.exception"),
-    ENTITY_NOT_FOUND("entity.not.found.exception"),
-    STALE_OBJECT("stale.object.exception"),
-    LOCK_OBJECT("lock.object.exception"),
-    ACCESS_DENIED("access.denied.exception"),
-    INVALID_REQUEST("invalid.request.exception"),
-    SECURITY_EXCEPTION("security.exception"),
-    SERVICE_NOT_FOUND("error.module.not.available"),
-    VALIDATION_EXCEPTION("validation.exception"),
-    RESOURCE_NOT_FOUND("resource.not.found.exception"),
-    FILE_NOT_FOUND("file.not.found.exception"),
-    IO_EXCEPTION("io.exception");
+    COMMON_EXCEPTION("d.common.exception"),
+    ENTITY_NOT_FOUND("d.entity.not.found.exception"),
+    STALE_OBJECT("d.stale.object.exception"),
+    LOCK_OBJECT("d.lock.object.exception"),
+    ACCESS_DENIED("d.access.denied.exception"),
+    INVALID_REQUEST("d.invalid.request.exception"),
+    SECURITY_EXCEPTION("d.security.exception"),
+    SERVICE_NOT_FOUND("d.error.module.not.available"),
+    VALIDATION_EXCEPTION("d.validation.exception"),
+    RESOURCE_NOT_FOUND("d.resource.not.found.exception"),
+    FILE_NOT_FOUND("d.file.not.found.exception"),
+    IO_EXCEPTION("d.io.exception");
 
     private final String codeMessage;
 

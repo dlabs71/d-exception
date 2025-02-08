@@ -37,7 +37,7 @@ public class ServiceException extends RuntimeException implements DException {
     public ServiceException(String message, ErrorCode errorCode) {
         super(message);
         if (message == null && errorCode == null) {
-            throw new IllegalArgumentException("Message and ErrorCode are both null");
+            throw new IllegalArgumentException("d.Message and ErrorCode are both null");
         }
         this.errorCode = errorCode;
         this.message = message;
@@ -58,7 +58,7 @@ public class ServiceException extends RuntimeException implements DException {
     public ServiceException(String message, ErrorCode errorCode, @NonNull Throwable cause) {
         super(cause.getMessage(), cause);
         if (message == null && errorCode == null) {
-            throw new IllegalArgumentException("Message and ErrorCode are both null");
+            throw new IllegalArgumentException("d.Message and ErrorCode are both null");
         }
         this.errorCode = errorCode;
         this.message = message;

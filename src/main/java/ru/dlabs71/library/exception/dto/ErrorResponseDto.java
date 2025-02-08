@@ -54,5 +54,5 @@ public class ErrorResponseDto implements Serializable {
     /**
      * It is complement data object for client. You can set here any extra data for client.
      */
-    private Object data;
+    private Serializable data;
 }

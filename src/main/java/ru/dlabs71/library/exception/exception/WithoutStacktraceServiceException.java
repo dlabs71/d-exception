@@ -14,7 +14,7 @@ import ru.dlabs71.library.exception.type.ErrorCode;
  * @author Ivanov Danila
  * @since 1.0.0
  */
-public class WithoutStacktraceServiceException extends ServiceException {
+public final class WithoutStacktraceServiceException extends ServiceException {
 
     public WithoutStacktraceServiceException(String message, ErrorCode errorCode) {
         super(message, errorCode);

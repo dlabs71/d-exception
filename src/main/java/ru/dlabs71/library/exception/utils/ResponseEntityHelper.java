@@ -122,7 +122,7 @@ public final class ResponseEntityHelper {
                 );
             }
         } else {
-            if (message.startsWith("$")) {
+            if (message.startsWith("d.$")) {
                 return messageService.getMessage(
                     message.substring(1),
                     exceptionMessage

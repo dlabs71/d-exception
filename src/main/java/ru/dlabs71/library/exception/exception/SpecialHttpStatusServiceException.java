@@ -17,7 +17,7 @@ import ru.dlabs71.library.exception.type.ErrorCode;
  * @since 1.0.0
  */
 @Getter
-public class SpecialHttpStatusServiceException extends ServiceException {
+public final class SpecialHttpStatusServiceException extends ServiceException {
 
     private final HttpStatus httpStatus;
 

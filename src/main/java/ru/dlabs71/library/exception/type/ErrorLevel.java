@@ -1,5 +1,7 @@
 package ru.dlabs71.library.exception.type;
 
+import java.io.Serializable;
+
 /**
  * Error level is code in the body of a http response that it is indicator for a client
  * must handle response as: ERROR, WARNING, INFO, etc. You can create your own implementation class or enum.
@@ -11,7 +13,7 @@ package ru.dlabs71.library.exception.type;
  * @author Ivanov Danila
  * @since 1.0.0
  */
-public interface ErrorLevel {
+public interface ErrorLevel extends Serializable {
 
     String name();
 }
