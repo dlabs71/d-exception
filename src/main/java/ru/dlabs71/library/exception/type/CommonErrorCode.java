@@ -4,13 +4,12 @@ import lombok.Getter;
 
 /**
  * Error codes which is supplied the library.
- * <p>
- * <div><strong>Project name:</strong> d-exception </div>
+ *
+ * <p><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
- * </p>
  *
  * @author Ivanov Danila
- * @since 1.0.0
+ * @since 0.0.1
  */
 @Getter
 public enum CommonErrorCode implements ErrorCode {

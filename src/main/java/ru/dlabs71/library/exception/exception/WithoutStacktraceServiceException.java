@@ -6,13 +6,12 @@ import ru.dlabs71.library.exception.type.ErrorCode;
 /**
  * This class extends of {@link ServiceException} class. It is a special exception implementation
  * who guarantees won't set up stacktrace into a response body.
- * <p>
- * <div><strong>Project name:</strong> d-exception </div>
+ *
+ * <p><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
- * </p>
  *
  * @author Ivanov Danila
- * @since 1.0.0
+ * @since 0.0.1
  */
 public final class WithoutStacktraceServiceException extends ServiceException {
 
