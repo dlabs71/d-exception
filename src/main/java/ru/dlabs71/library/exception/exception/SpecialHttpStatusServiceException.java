@@ -8,13 +8,12 @@ import ru.dlabs71.library.exception.type.ErrorCode;
 /**
  * This class extends of {@link ServiceException} class. It is special exception implementation
  * with specific HTTP status.
- * <p>
- * <div><strong>Project name:</strong> d-exception </div>
+ *
+ * <p><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
- * </p>
  *
  * @author Ivanov Danila
- * @since 1.0.0
+ * @since 0.0.1
  */
 @Getter
 public final class SpecialHttpStatusServiceException extends ServiceException {

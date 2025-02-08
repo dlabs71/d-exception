@@ -5,18 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import ru.dlabs71.library.exception.exception.BusinessLogicServiceException;
 import ru.dlabs71.library.exception.type.ErrorCode;
 import ru.dlabs71.library.exception.type.ErrorLevel;
 
 /**
  * Reflection an HTTP response body.
- * <p>
- * <div><strong>Project name:</strong> d-exception </div>
+ *
+ * <p><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
- * </p>
  *
  * @author Ivanov Danila
- * @since 1.0.0
+ * @since 0.0.1
  */
 @Getter
 @Setter
@@ -26,7 +26,7 @@ public class ErrorResponseDto implements Serializable {
 
     /**
      * This is indicator of informative message.
-     * Usually it is a business logic exception {@see BusinessLogicServiceException}.
+     * Usually it is a business logic exception {@link BusinessLogicServiceException}.
      * It points to client to display a UI alert or popup.
      **/
     private boolean informative;

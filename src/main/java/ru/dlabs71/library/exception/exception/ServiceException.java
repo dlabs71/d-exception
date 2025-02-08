@@ -10,15 +10,14 @@ import ru.dlabs71.library.exception.type.ErrorCode;
  * It is usually ancestor for user-defined exception classes. This exception contains a normal text message
  * and error code. When message is not passed value the message will retrieve from errorCode (if it is specified).
  *
- * <p>{@see} {@link BusinessLogicServiceException}, {@link SpecialHttpStatusServiceException},
+ * <p>{@link BusinessLogicServiceException}, {@link SpecialHttpStatusServiceException},
  * {@link WithoutStacktraceServiceException}
- * <p>
- * <div><strong>Project name:</strong> d-exception </div>
+ *
+ * <p><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
- * </p>
  *
  * @author Ivanov Danila
- * @since 1.0.0
+ * @since 0.0.1
  */
 @Getter
 @Setter

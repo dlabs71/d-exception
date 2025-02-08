@@ -11,13 +11,12 @@ import ru.dlabs71.library.exception.type.ErrorCode;
 
 /**
  * Helper class for creating HTTP response.
- * <p>
- * <div><strong>Project name:</strong> d-exception </div>
+ *
+ * <p><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
- * </p>
  *
  * @author Ivanov Danila
- * @since 1.0.0
+ * @since 0.0.1
  */
 @RequiredArgsConstructor
 public final class ResponseEntityHelper {

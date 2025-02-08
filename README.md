@@ -261,16 +261,6 @@ import ru.dlabs71.library.exception.exception.ServiceException;
 import ru.dlabs71.library.exception.exception.SpecialHttpStatusServiceException;
 import ru.dlabs71.library.exception.exception.WithoutStacktraceServiceException;
 
-/**
- * It's simple exception resolver who extends the {@linkplain AbstractHttpExceptionResolver} class.
- * <p>
- * <div><strong>Project name:</strong> d-exception </div>
- * <div><strong>Creation date:</strong> 2024-08-24 </div>
- * </p>
- *
- * @author Ivanov Danila
- * @since 1.0.0
- */
 @RestControllerAdvice
 public final class SimpleHttpExceptionResolver extends AbstractHttpExceptionResolver {
 

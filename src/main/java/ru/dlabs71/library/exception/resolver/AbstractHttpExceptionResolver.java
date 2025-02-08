@@ -21,15 +21,12 @@ import ru.dlabs71.library.exception.utils.ResponseEntityHelper;
  *
  * <p>This class provides several helper methods to simplify the creation of exception handler methods.
  * These methods generate HTTP responses with appropriate status codes and response bodies.
- * See {@link SimpleHttpExceptionResolver} for an example implementation.</p>
  *
- * <p>
- * <div><strong>Project name:</strong> d-exception</div>
+ * <p><div><strong>Project name:</strong> d-exception</div>
  * <div><strong>Creation date:</strong> 2024-08-24</div>
- * </p>
  *
  * @author Ivanov Danila
- * @since 1.0.0
+ * @since 0.0.1
  */
 @Slf4j
 public abstract class AbstractHttpExceptionResolver {
