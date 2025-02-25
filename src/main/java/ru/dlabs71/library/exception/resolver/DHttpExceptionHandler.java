@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.dlabs71.library.exception.DExceptionMessageService;
 import ru.dlabs71.library.exception.dto.ErrorResponseDto;
@@ -13,36 +12,39 @@ import ru.dlabs71.library.exception.exception.ServiceException;
 import ru.dlabs71.library.exception.exception.SpecialHttpStatusServiceException;
 import ru.dlabs71.library.exception.exception.WithoutStacktraceServiceException;
 import ru.dlabs71.library.exception.type.CommonErrorCode;
+import ru.dlabs71.library.exception.type.DHttpStatus;
 import ru.dlabs71.library.exception.type.ErrorCode;
 import ru.dlabs71.library.exception.utils.ResponseEntityHelper;
 
 /**
- * Abstract class for implementing a standard exception resolver.
+ * A utility class for constructing the HTTP response body from an exception.
  *
  * <p>This class provides several helper methods to simplify the creation of exception handler methods.
  * These methods generate HTTP responses with appropriate status codes and response bodies.
  *
- * <p><div><strong>Project name:</strong> d-exception</div>
- * <div><strong>Creation date:</strong> 2024-08-24</div>
+ * <p>Utilize this class in your HTTP exception resolver following the composition tenet.
+ *
+ * <p><div><strong>Project name:</strong> d-exception </div>
+ * <div><strong>Creation date:</strong> 2025-02-25 </div>
  *
  * @author Ivanov Danila
- * @since 0.0.1
- * @deprecated use {@link DHttpExceptionHandler} instead of this class
+ * @since 1.0.0
  */
-@Deprecated
 @Slf4j
-public abstract class AbstractHttpExceptionResolver {
+public final class DHttpExceptionHandler {
+
 
     /**
      * Indicates whether stack traces should be included in the HTTP response body.
      */
     @Getter
-    protected final boolean enableStacktrace;
+    private final boolean enableStacktrace;
 
     /**
      * Service for converting error codes into human-readable messages.
      */
-    protected final DExceptionMessageService messageService;
+    @Getter
+    private final DExceptionMessageService messageService;
 
     /**
      * Helper class for creating {@link ResponseEntity} objects.
@@ -55,7 +57,7 @@ public abstract class AbstractHttpExceptionResolver {
      * @param enableStacktrace Whether to include stack traces in the HTTP response body.
      * @param messageService   The service used to convert error codes into human-readable messages.
      */
-    protected AbstractHttpExceptionResolver(boolean enableStacktrace, DExceptionMessageService messageService) {
+    public DHttpExceptionHandler(boolean enableStacktrace, DExceptionMessageService messageService) {
         this.enableStacktrace = enableStacktrace;
         this.messageService = messageService;
         this.responseEntityHelper = new ResponseEntityHelper(messageService);
@@ -67,31 +69,30 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The business logic exception to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: true</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveBusinessLogicException(
+    public DHttpResponse resolveBusinessLogicException(
         HttpServletRequest request,
         BusinessLogicServiceException exception
     ) {
         logRequestException(request, exception);
 
         String message = responseEntityHelper.acquireMessage(exception);
-        return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(
-                ErrorResponseDto.builder()
-                    .informative(true)
-                    .errorCode(exception.getErrorCode())
-                    .data(exception.getData())
-                    .level(exception.getLevel())
-                    .message(message)
-                    .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
-                    .build()
-            );
+        return new DHttpResponse(
+            DHttpStatus.INTERNAL_SERVER_ERROR.getValue(),
+            ErrorResponseDto.builder()
+                .informative(true)
+                .errorCode(exception.getErrorCode())
+                .data(exception.getData())
+                .level(exception.getLevel())
+                .message(message)
+                .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
+                .build()
+        );
     }
 
     /**
@@ -100,29 +101,28 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The service exception to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: false</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveServiceException(
+    public DHttpResponse resolveServiceException(
         HttpServletRequest request,
         ServiceException exception
     ) {
         logRequestException(request, exception);
 
         String message = responseEntityHelper.acquireMessage(exception);
-        return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(
-                ErrorResponseDto.builder()
-                    .informative(false)
-                    .errorCode(exception.getErrorCode())
-                    .message(message)
-                    .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
-                    .build()
-            );
+        return new DHttpResponse(
+            DHttpStatus.INTERNAL_SERVER_ERROR.getValue(),
+            ErrorResponseDto.builder()
+                .informative(false)
+                .errorCode(exception.getErrorCode())
+                .message(message)
+                .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
+                .build()
+        );
     }
 
     /**
@@ -131,29 +131,28 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The service exception to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: false</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveServiceException(
+    public DHttpResponse resolveServiceException(
         HttpServletRequest request,
         WithoutStacktraceServiceException exception
     ) {
         logRequestException(request, exception);
 
         String message = responseEntityHelper.acquireMessage(exception);
-        return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(
-                ErrorResponseDto.builder()
-                    .informative(false)
-                    .errorCode(exception.getErrorCode())
-                    .message(message)
-                    .stacktrace(null)
-                    .build()
-            );
+        return new DHttpResponse(
+            DHttpStatus.INTERNAL_SERVER_ERROR.getValue(),
+            ErrorResponseDto.builder()
+                .informative(false)
+                .errorCode(exception.getErrorCode())
+                .message(message)
+                .stacktrace(null)
+                .build()
+        );
     }
 
     /**
@@ -162,28 +161,28 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The service exception to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: Custom status from the exception</li>
      *         <li>Informative: false</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveServiceException(
+    public DHttpResponse resolveServiceException(
         HttpServletRequest request,
         SpecialHttpStatusServiceException exception
     ) {
         logRequestException(request, exception);
 
         String message = responseEntityHelper.acquireMessage(exception);
-        return ResponseEntity
-            .status(exception.getHttpStatus())
-            .body(ErrorResponseDto.builder()
-                      .informative(false)
-                      .errorCode(exception.getErrorCode())
-                      .message(message)
-                      .stacktrace(null)
-                      .build()
-            );
+        return new DHttpResponse(
+            exception.getHttpStatus(),
+            ErrorResponseDto.builder()
+                .informative(false)
+                .errorCode(exception.getErrorCode())
+                .message(message)
+                .stacktrace(null)
+                .build()
+        );
     }
 
     /**
@@ -192,16 +191,16 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The exception to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: false</li>
      *         <li>Message: {@link CommonErrorCode#ENTITY_NOT_FOUND}</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveEntityNotFound(HttpServletRequest request, Exception exception) {
+    public DHttpResponse resolveEntityNotFound(HttpServletRequest request, Exception exception) {
         logRequestException(request, exception);
-        return responseEntityHelper.makeResponse500(CommonErrorCode.ENTITY_NOT_FOUND, exception, enableStacktrace);
+        return responseEntityHelper.buildResponse500(CommonErrorCode.ENTITY_NOT_FOUND, exception, enableStacktrace);
     }
 
     /**
@@ -210,16 +209,16 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The exception to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: false</li>
      *         <li>Message: {@link CommonErrorCode#STALE_OBJECT}</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveOptimisticLock(HttpServletRequest request, Exception exception) {
+    public DHttpResponse resolveOptimisticLock(HttpServletRequest request, Exception exception) {
         logRequestException(request, exception);
-        return responseEntityHelper.makeResponse500(CommonErrorCode.STALE_OBJECT, exception, enableStacktrace);
+        return responseEntityHelper.buildResponse500(CommonErrorCode.STALE_OBJECT, exception, enableStacktrace);
     }
 
     /**
@@ -228,16 +227,16 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The exception to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: false</li>
      *         <li>Message: {@link CommonErrorCode#LOCK_OBJECT}</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveLockException(HttpServletRequest request, Exception exception) {
+    public DHttpResponse resolveLockException(HttpServletRequest request, Exception exception) {
         logRequestException(request, exception);
-        return responseEntityHelper.makeResponse500(CommonErrorCode.LOCK_OBJECT, exception, enableStacktrace);
+        return responseEntityHelper.buildResponse500(CommonErrorCode.LOCK_OBJECT, exception, enableStacktrace);
     }
 
     /**
@@ -246,21 +245,21 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The exception to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 403 (Forbidden)</li>
      *         <li>Informative: false</li>
      *         <li>Message: {@link CommonErrorCode#ACCESS_DENIED}</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveAccessDeniedException(
+    public DHttpResponse resolveAccessDeniedException(
         HttpServletRequest request,
         Exception exception
     ) {
         logRequestException(request, exception);
-        return responseEntityHelper.makeResponse(
+        return responseEntityHelper.buildResponse(
             CommonErrorCode.ACCESS_DENIED,
-            HttpStatus.FORBIDDEN,
+            DHttpStatus.FORBIDDEN.getValue(),
             exception,
             false
         );
@@ -272,21 +271,21 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The exception to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 404 (Not Found)</li>
      *         <li>Informative: false</li>
      *         <li>Message: {@link CommonErrorCode#FILE_NOT_FOUND}</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveFileNotFoundException(
+    public DHttpResponse resolveFileNotFoundException(
         HttpServletRequest request,
         Exception exception
     ) {
         logRequestException(request, exception);
-        return responseEntityHelper.makeResponse(
+        return responseEntityHelper.buildResponse(
             CommonErrorCode.FILE_NOT_FOUND,
-            HttpStatus.NOT_FOUND,
+            DHttpStatus.NOT_FOUND.getValue(),
             exception,
             false
         );
@@ -298,14 +297,14 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param exception The IOException to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: false</li>
      *         <li>Message: {@link CommonErrorCode#IO_EXCEPTION}</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveIOException(
+    public DHttpResponse resolveIOException(
         HttpServletRequest request,
         IOException exception
     ) {
@@ -318,14 +317,14 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request The HTTP request that caused the exception.
      * @param error   The AssertionError to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: false</li>
      *         <li>Message: {@link CommonErrorCode#VALIDATION_EXCEPTION}</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveAssertationError(
+    public DHttpResponse resolveAssertationError(
         HttpServletRequest request,
         AssertionError error
     ) {
@@ -338,19 +337,19 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param throwable The Throwable to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: false</li>
      *         <li>Message: {@link CommonErrorCode#COMMON_EXCEPTION} + message from the throwable</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveDefaultException(
+    public DHttpResponse resolveDefaultException(
         HttpServletRequest request,
         Throwable throwable
     ) {
         logRequestException(request, throwable);
-        return responseEntityHelper.makeResponse500(CommonErrorCode.COMMON_EXCEPTION, throwable, enableStacktrace);
+        return responseEntityHelper.buildResponse500(CommonErrorCode.COMMON_EXCEPTION, throwable, enableStacktrace);
     }
 
     /**
@@ -360,20 +359,20 @@ public abstract class AbstractHttpExceptionResolver {
      * @param errorCode The specific error code to use.
      * @param throwable The Throwable to handle.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: 500 (Internal Server Error)</li>
      *         <li>Informative: false</li>
      *         <li>Message: From the error code</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveDefaultException(
+    public DHttpResponse resolveDefaultException(
         HttpServletRequest request,
         ErrorCode errorCode,
         Throwable throwable
     ) {
         logRequestException(request, throwable);
-        return responseEntityHelper.makeResponse500(errorCode, throwable, enableStacktrace);
+        return responseEntityHelper.buildResponse500(errorCode, throwable, enableStacktrace);
     }
 
     /**
@@ -385,22 +384,22 @@ public abstract class AbstractHttpExceptionResolver {
      * @param throwable      The Throwable to handle.
      * @param withStacktrace Whether to include the stack trace in the response.
      *
-     * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} as the response body.
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
      *     <ul>
      *         <li>HTTP status: From the status parameter</li>
      *         <li>Informative: false</li>
      *         <li>Message: From the error code</li>
      *     </ul>
      */
-    protected ResponseEntity<ErrorResponseDto> resolveDefaultException(
+    public DHttpResponse resolveDefaultException(
         HttpServletRequest request,
         ErrorCode errorCode,
-        HttpStatus status,
+        int status,
         Throwable throwable,
         boolean withStacktrace
     ) {
         logRequestException(request, throwable);
-        return responseEntityHelper.makeResponse(errorCode, status, throwable, withStacktrace);
+        return responseEntityHelper.buildResponse(errorCode, status, throwable, withStacktrace);
     }
 
     /**
@@ -409,7 +408,7 @@ public abstract class AbstractHttpExceptionResolver {
      * @param request   The HTTP request that caused the exception.
      * @param throwable The exception to log.
      */
-    protected void logRequestException(HttpServletRequest request, Throwable throwable) {
+    private void logRequestException(HttpServletRequest request, Throwable throwable) {
         log.debug("d.Unexpected exception processing request: {}", request.getRequestURI());
         log.error(String.format("d.Request exception: %s", throwable.getMessage()), throwable);
     }

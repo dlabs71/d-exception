@@ -6,7 +6,7 @@
 
     <groupId>ru.dlabs71.library</groupId>
     <artifactId>d-exception</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <name>d-exception</name>
@@ -54,13 +54,13 @@
         <checkstyle.version>9.3</checkstyle.version>
 
         <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <slf4j.version>2.0.7</slf4j.version>
-        <spring-web.version>5.3.39</spring-web.version>
+        <spring-web.version>6.2.3</spring-web.version>
         <jakarta.version>5.0.0</jakarta.version>
         <lombok.version>1.18.26</lombok.version>
         <junit.version>5.10.0</junit.version>

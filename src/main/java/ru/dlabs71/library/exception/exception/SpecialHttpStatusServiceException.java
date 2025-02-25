@@ -18,12 +18,31 @@ import ru.dlabs71.library.exception.type.ErrorCode;
 @Getter
 public final class SpecialHttpStatusServiceException extends ServiceException {
 
-    private final HttpStatus httpStatus;
+    private final int httpStatus;
 
     public SpecialHttpStatusServiceException(
         String message,
         ErrorCode errorCode,
         @NonNull HttpStatus httpStatus
+    ) {
+        super(message, errorCode);
+        this.httpStatus = httpStatus.value();
+    }
+
+    public SpecialHttpStatusServiceException(
+        String message,
+        ErrorCode errorCode,
+        @NonNull Throwable cause,
+        @NonNull HttpStatus httpStatus
+    ) {
+        super(message, errorCode, cause);
+        this.httpStatus = httpStatus.value();
+    }
+
+    public SpecialHttpStatusServiceException(
+        String message,
+        ErrorCode errorCode,
+        int httpStatus
     ) {
         super(message, errorCode);
         this.httpStatus = httpStatus;
@@ -33,7 +52,7 @@ public final class SpecialHttpStatusServiceException extends ServiceException {
         String message,
         ErrorCode errorCode,
         @NonNull Throwable cause,
-        @NonNull HttpStatus httpStatus
+        int httpStatus
     ) {
         super(message, errorCode, cause);
         this.httpStatus = httpStatus;
