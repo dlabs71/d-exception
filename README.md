@@ -3,8 +3,8 @@
 [![Maven Central][maven-central-img]][maven-central-url]
 [![Javadocs][javadocs-img]][javadocs-url]
 
-Библиотека предоставляет готовую базовую иерархию классов исключений для вашего приложения. Для Spring-приложений также
-предусмотрен абстрактный Exception Resolver класс, который можно расширять.
+Библиотека предоставляет готовую базовую иерархию классов исключений для вашего приложения, а также класс для построения
+обработчика ошибок.
 
 # Установка MAVEN
 
@@ -15,7 +15,7 @@
 <dependency>
     <groupId>ru.dlabs71.library</groupId>
     <artifactId>d-exception</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
@@ -222,12 +222,12 @@ public class Config {
 
 ## <h2 id="section2">2. Exception Resolver</h2>
 
-Библиотека предоставляет абстрактный класс для создания собственного обработчика исключений.
-`AbstractHttpExceptionResolver` позволяет включать или отключать `stacktrace` в ответе, а также предоставляет набор
+Библиотека предоставляет класс для создания собственного обработчика исключений.
+`DHttpExceptionHandler` позволяет включать или отключать `stacktrace` в ответе, а также предоставляет набор
 готовых
-методов для создания `ResponseEntity` на основе исключения. В таблице ниже приведено краткое описание этих методов.
+методов для создания `DHttpResponse` на основе исключения.
 
-Для указания сообщения об ошибке в `ResponseEntity` методы класса используют следующие правила:
+Для указания сообщения об ошибке в `DHttpResponse` методы класса используют следующие правила:
 
 Для исключений, реализующих интерфейс `DException`:
 
@@ -244,7 +244,7 @@ public class Config {
 Для более детального разбора алгоритма
 смотрите [`ResponseEntityHelper.acquireMessage()`](src%2Fmain%2Fjava%2Fru%2Fdlabs71%2Flibrary%2Fexception%2Futils%2FResponseEntityHelper.java).
 
-Используя `AbstractHttpExceptionResolver`, можно легко создать собственный `ExceptionResolver`. Например, для
+Используя `DHttpExceptionHandler`, можно легко создать собственный `ExceptionResolver`. Например, для
 Spring-приложений можно использовать следующий класс:
 
 ```java
@@ -260,48 +260,48 @@ import ru.dlabs71.library.exception.exception.BusinessLogicServiceException;
 import ru.dlabs71.library.exception.exception.ServiceException;
 import ru.dlabs71.library.exception.exception.SpecialHttpStatusServiceException;
 import ru.dlabs71.library.exception.exception.WithoutStacktraceServiceException;
+import ru.dlabs71.library.exception.resolver.DHttpExceptionHandler;
+import ru.dlabs71.library.exception.resolver.DHttpResponse;
 
 @RestControllerAdvice
-public final class SimpleHttpExceptionResolver extends AbstractHttpExceptionResolver {
+public final class SimpleHttpExceptionResolver {
+
+    private final DHttpExceptionHandler handler;
 
     public SimpleHttpExceptionResolver(boolean enableStacktrace, DExceptionMessageService messageService) {
-        super(enableStacktrace, messageService);
+        this.handler = new DHttpExceptionHandler(enableStacktrace, messageService);
     }
 
-    @Override
     @ExceptionHandler({ BusinessLogicServiceException.class })
     public ResponseEntity<ErrorResponseDto> resolveBusinessLogicException(
         HttpServletRequest request,
         BusinessLogicServiceException exception
     ) {
-        return super.resolveBusinessLogicException(request, exception);
+        return this.resolveException(handler.resolveBusinessLogicException(request, exception));
     }
 
-    @Override
     @ExceptionHandler({ ServiceException.class })
     public ResponseEntity<ErrorResponseDto> resolveServiceException(
         HttpServletRequest request,
         ServiceException exception
     ) {
-        return super.resolveServiceException(request, exception);
+        return this.resolveException(handler.resolveServiceException(request, exception));
     }
 
-    @Override
     @ExceptionHandler({ WithoutStacktraceServiceException.class })
     public ResponseEntity<ErrorResponseDto> resolveServiceException(
         HttpServletRequest request,
         WithoutStacktraceServiceException exception
     ) {
-        return super.resolveServiceException(request, exception);
+        return this.resolveException(handler.resolveServiceException(request, exception));
     }
 
-    @Override
     @ExceptionHandler({ SpecialHttpStatusServiceException.class })
     public ResponseEntity<ErrorResponseDto> resolveServiceException(
         HttpServletRequest request,
         SpecialHttpStatusServiceException exception
     ) {
-        return super.resolveServiceException(request, exception);
+        return this.resolveException(handler.resolveServiceException(request, exception));
     }
 
     @ExceptionHandler({ FileNotFoundException.class })
@@ -309,35 +309,40 @@ public final class SimpleHttpExceptionResolver extends AbstractHttpExceptionReso
         HttpServletRequest request,
         Exception exception
     ) {
-        return super.resolveFileNotFoundException(request, exception);
+        return this.resolveException(handler.resolveFileNotFoundException(request, exception));
     }
 
-    @Override
     @ExceptionHandler({ IOException.class })
     public ResponseEntity<ErrorResponseDto> resolveIOException(
         HttpServletRequest request,
         IOException exception
     ) {
-        return super.resolveIOException(request, exception);
+        return this.resolveException(handler.resolveIOException(request, exception));
     }
 
-    @Override
     @ExceptionHandler({ AssertionError.class })
     public ResponseEntity<ErrorResponseDto> resolveAssertationError(
         HttpServletRequest request,
         AssertionError error
     ) {
-        return super.resolveAssertationError(request, error);
+        return this.resolveException(handler.resolveAssertationError(request, error));
     }
 
-    @Override
     @ExceptionHandler({ Throwable.class })
     public ResponseEntity<ErrorResponseDto> resolveDefaultException(HttpServletRequest request, Throwable exception) {
-        return super.resolveDefaultException(request, exception);
+        return this.resolveException(handler.resolveDefaultException(request, exception));
+    }
+
+    private ResponseEntity<ErrorResponseDto> resolveException(DHttpResponse response) {
+        return ResponseEntity.status(response.httpStatus()).body(response.body());
     }
 }
 
 ```
+
+Библиотека также предоставляет
+устаревший [AbstractHttpExceptionResolver.java](src%2Fmain%2Fjava%2Fru%2Fdlabs71%2Flibrary%2Fexception%2Fresolver%2FAbstractHttpExceptionResolver.java).
+Не используйте его, так как он будет удалён в следующих версиях.
 
 ## <h2 id="section3">3. Utility классы, enum-ы</h2>
 
