@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import ru.dlabs71.library.exception.DExceptionMessageService;
 import ru.dlabs71.library.exception.dto.ErrorResponseDto;
+import ru.dlabs71.library.exception.exception.BusinessLogicException;
 import ru.dlabs71.library.exception.exception.BusinessLogicServiceException;
 import ru.dlabs71.library.exception.exception.ServiceException;
 import ru.dlabs71.library.exception.exception.SpecialHttpStatusServiceException;
@@ -78,6 +79,38 @@ public final class DHttpExceptionHandler {
     public DHttpResponse resolveBusinessLogicException(
         HttpServletRequest request,
         BusinessLogicServiceException exception
+    ) {
+        logRequestException(request, exception);
+
+        String message = responseEntityHelper.acquireMessage(exception);
+        return new DHttpResponse(
+            DHttpStatus.INTERNAL_SERVER_ERROR.getValue(),
+            ErrorResponseDto.builder()
+                .informative(true)
+                .errorCode(exception.getErrorCode())
+                .data(exception.getData())
+                .level(exception.getLevel())
+                .message(message)
+                .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
+                .build()
+        );
+    }
+
+    /**
+     * Handles a business logic exception, typically including a detailed response body for the client.
+     *
+     * @param request   The HTTP request that caused the exception.
+     * @param exception The business logic exception to handle.
+     *
+     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
+     *     <ul>
+     *         <li>HTTP status: 500 (Internal Server Error)</li>
+     *         <li>Informative: true</li>
+     *     </ul>
+     */
+    public DHttpResponse resolveBusinessLogicException(
+        HttpServletRequest request,
+        BusinessLogicException exception
     ) {
         logRequestException(request, exception);
 

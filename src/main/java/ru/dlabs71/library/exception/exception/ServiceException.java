@@ -11,7 +11,7 @@ import ru.dlabs71.library.exception.type.ErrorCode;
  * and error code. When message is not passed value the message will retrieve from errorCode (if it is specified).
  *
  * <p>{@link BusinessLogicServiceException}, {@link SpecialHttpStatusServiceException},
- * {@link WithoutStacktraceServiceException}
+ * {@link WithoutStacktraceServiceException}, {@link BusinessLogicException}
  *
  * <p><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
@@ -63,11 +63,6 @@ public class ServiceException extends RuntimeException implements DException {
         this.message = message;
     }
 
-    @Override
-    public String getCauseExceptionMessage() {
-        return this.getMessage();
-    }
-
     public static ServiceException build(String message) {
         return new ServiceException(message, null);
     }
@@ -82,5 +77,10 @@ public class ServiceException extends RuntimeException implements DException {
 
     public static ServiceException build(ErrorCode errorCode, Throwable throwable) {
         return new ServiceException(null, errorCode, throwable);
+    }
+
+    @Override
+    public String getCauseExceptionMessage() {
+        return this.getMessage();
     }
 }
