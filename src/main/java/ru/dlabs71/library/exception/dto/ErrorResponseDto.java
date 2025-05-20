@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import ru.dlabs71.library.exception.exception.BusinessLogicException;
 import ru.dlabs71.library.exception.exception.BusinessLogicServiceException;
 import ru.dlabs71.library.exception.type.ErrorCode;
 import ru.dlabs71.library.exception.type.ErrorLevel;
@@ -26,7 +27,7 @@ public class ErrorResponseDto implements Serializable {
 
     /**
      * This is indicator of informative message.
-     * Usually it is a business logic exception {@link BusinessLogicServiceException}.
+     * Usually it is a business logic exception {@link BusinessLogicServiceException}, {@link BusinessLogicException}.
      * It points to client to display a UI alert or popup.
      **/
     private boolean informative;

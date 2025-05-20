@@ -1,8 +1,6 @@
 package ru.dlabs71.library.exception.utils;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import ru.dlabs71.library.exception.DExceptionMessageService;
 import ru.dlabs71.library.exception.dto.ErrorResponseDto;
 import ru.dlabs71.library.exception.exception.DException;
@@ -25,70 +23,20 @@ public final class ResponseEntityHelper {
 
     private final DExceptionMessageService messageService;
 
-    /**
-     * Create response entity using parameters.
-     *
-     * @deprecated use {@link #buildResponse500(ErrorCode, Throwable, boolean)}
-     */
-    @Deprecated
-    public ResponseEntity<ErrorResponseDto> makeResponse500(
-        ErrorCode errorCode,
-        Throwable cause,
-        boolean withStacktrace
-    ) {
-        return this.makeResponse(null, errorCode, HttpStatus.INTERNAL_SERVER_ERROR, cause, withStacktrace);
-    }
-
-    /**
-     * Create response entity using parameters.
-     *
-     * @deprecated use {@link #buildResponse(ErrorCode, int, Throwable, boolean)}
-     */
-    @Deprecated
-    public ResponseEntity<ErrorResponseDto> makeResponse(
-        ErrorCode errorCode,
-        HttpStatus status,
-        Throwable cause,
-        boolean withStacktrace
-    ) {
-        return this.makeResponse(null, errorCode, status, cause, withStacktrace);
-    }
-
-    /**
-     * Create response entity using parameters.
-     *
-     * @param message        a message explain cause of an exception.
-     * @param errorCode      special error code. It can be replacement for message
-     *                       or an extra info field in an HTTP response body for client.
-     * @param status         an HTTP status
-     * @param cause          a throwable object - cause of exception
-     * @param withStacktrace if it's true, the stacktrace from a throwable
-     *                       will be assigned to the field {@linkplain ErrorResponseDto#stacktrace}
-     *
-     * @return a prepared ResponseEntity object
-     *
-     * @deprecated use {@link #buildResponse(String, ErrorCode, int, Throwable, boolean)}
-     */
-    @Deprecated
-    public ResponseEntity<ErrorResponseDto> makeResponse(
-        String message,
-        ErrorCode errorCode,
-        HttpStatus status,
-        Throwable cause,
-        boolean withStacktrace
-    ) {
-        DHttpResponse response = buildResponse(message, errorCode, status.value(), cause, withStacktrace);
-        return ResponseEntity
-            .status(status.value())
-            .body(response.body());
-    }
-
     public DHttpResponse buildResponse500(
         ErrorCode errorCode,
         Throwable cause,
         boolean withStacktrace
     ) {
         return this.buildResponse(null, errorCode, DHttpStatus.INTERNAL_SERVER_ERROR.getValue(), cause, withStacktrace);
+    }
+
+    public DHttpResponse buildResponse500(
+        String message,
+        Throwable cause,
+        boolean withStacktrace
+    ) {
+        return this.buildResponse(message, null, DHttpStatus.INTERNAL_SERVER_ERROR.getValue(), cause, withStacktrace);
     }
 
     public DHttpResponse buildResponse(
@@ -98,6 +46,15 @@ public final class ResponseEntityHelper {
         boolean withStacktrace
     ) {
         return this.buildResponse(null, errorCode, status, cause, withStacktrace);
+    }
+
+    public DHttpResponse buildResponse(
+        String message,
+        int status,
+        Throwable cause,
+        boolean withStacktrace
+    ) {
+        return this.buildResponse(message, null, status, cause, withStacktrace);
     }
 
     /**
@@ -181,7 +138,7 @@ public final class ResponseEntityHelper {
                 );
             }
         } else {
-            if (message.startsWith("d.$")) {
+            if (message.startsWith("$")) {
                 return messageService.getMessage(
                     message.substring(1),
                     exceptionMessage
