@@ -45,7 +45,7 @@ public class BusinessLogicException extends ServiceException {
         Serializable data,
         @NonNull Throwable cause
     ) {
-        super(null, errorCode, cause);
+        super(errorCode.name(), errorCode, cause);
         this.level = level != null ? level : CommonErrorLevel.ERROR;
         this.data = data;
     }
@@ -64,7 +64,7 @@ public class BusinessLogicException extends ServiceException {
         ErrorLevel level,
         Serializable data
     ) {
-        super(null, errorCode);
+        super(errorCode.name(), errorCode);
         this.level = level != null ? level : CommonErrorLevel.ERROR;
         this.data = data;
     }
@@ -83,5 +83,19 @@ public class BusinessLogicException extends ServiceException {
 
     public static BusinessLogicException build(ErrorCode errorCode, ErrorLevel errorLevel, Throwable throwable) {
         return new BusinessLogicException(errorCode, errorLevel, null, throwable);
+    }
+
+    public static ServiceException build(String message) {
+        throw new UnsupportedOperationException(
+            "The string message is not supported in BusinessLogicException. "
+            + "Please use ErrorCode to specify the message."
+        );
+    }
+
+    public static ServiceException build(String message, Throwable throwable) {
+        throw new UnsupportedOperationException(
+            "The string message is not supported in BusinessLogicException. "
+            + "Please use ErrorCode to specify the message."
+        );
     }
 }

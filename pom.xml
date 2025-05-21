@@ -6,7 +6,7 @@
 
     <groupId>ru.dlabs71.library</groupId>
     <artifactId>d-exception</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
     <packaging>jar</packaging>
 
     <name>d-exception</name>

@@ -34,7 +34,7 @@ public class ServiceException extends RuntimeException implements DException {
      *                  or an extra info field in an HTTP response body for client.
      */
     public ServiceException(String message, ErrorCode errorCode) {
-        super(message);
+        super(message == null ? errorCode == null ? null : errorCode.name() : message);
         if (message == null && errorCode == null) {
             throw new IllegalArgumentException("d.Message and ErrorCode are both null");
         }
@@ -55,7 +55,7 @@ public class ServiceException extends RuntimeException implements DException {
      * @param cause     a throwable object - cause of exception
      */
     public ServiceException(String message, ErrorCode errorCode, @NonNull Throwable cause) {
-        super(cause.getMessage(), cause);
+        super(message == null ? errorCode == null ? null : errorCode.name() : message, cause);
         if (message == null && errorCode == null) {
             throw new IllegalArgumentException("d.Message and ErrorCode are both null");
         }
