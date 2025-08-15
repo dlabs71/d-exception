@@ -1,5 +1,6 @@
 package ru.dlabs71.library.exception.utils;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import ru.dlabs71.library.exception.DExceptionMessageService;
 import ru.dlabs71.library.exception.dto.ErrorResponseDto;
@@ -105,7 +106,8 @@ public final class ResponseEntityHelper {
         return this.acquireMessage(
             exception.getMessage(),
             exception.getErrorCode(),
-            exception.getCauseExceptionMessage()
+            exception.getCauseExceptionMessage(),
+            exception.getCodeMessageArgs()
         );
     }
 
@@ -120,33 +122,45 @@ public final class ResponseEntityHelper {
      * @param errorCode        error code. If the message isn't passed then message will be acquired by
      *                         the code associated with a value of the error code.
      * @param exceptionMessage message from cause exception
+     * @param codeMessageArgs  parameters for substitution in the message template from the error code or message parameters.
      *
      * @return The message will be determined in the following order:
      *     1) If the errorCode is specified, the message will be retrieved using the message code.
      *     2) If the errorCode is not specified but a message is provided, the message will be taken from the message parameter.
      *     3) If neither errorCode nor message is specified, the message will be taken from the exceptionMessage parameter.
      */
-    public String acquireMessage(String message, ErrorCode errorCode, String exceptionMessage) {
-        if (errorCode != null && errorCode.getCodeMessage() != null) {
-            return messageService.getMessage(
-                errorCode.getCodeMessage(),
-                exceptionMessage
+    public String acquireMessage(
+        String message,
+        ErrorCode errorCode,
+        String exceptionMessage,
+        Object... codeMessageArgs
+    ) {
+        if (message == null || message.isEmpty()) {
+            return this.getMessage(
+                Objects.requireNonNullElse(errorCode, CommonErrorCode.COMMON_EXCEPTION),
+                exceptionMessage,
+                codeMessageArgs
             );
-        }
-
-        if (message != null && !message.isEmpty()) {
+        } else {
             if (message.startsWith("$")) {
                 return messageService.getMessage(
                     message.substring(1),
                     exceptionMessage
                 );
-            } else {
-                return message;
             }
         }
+        return message;
+    }
 
+    private String getMessage(ErrorCode errorCode, String exceptionMessage, Object... codeMessageArgs) {
+        if (codeMessageArgs != null && codeMessageArgs.length > 0) {
+            Object[] args = new Object[codeMessageArgs.length + 1];
+            args[codeMessageArgs.length] = exceptionMessage;
+            System.arraycopy(codeMessageArgs, 0, args, 0, codeMessageArgs.length);
+            return messageService.getMessage(errorCode.getCodeMessage(), args);
+        }
         return messageService.getMessage(
-            CommonErrorCode.COMMON_EXCEPTION.getCodeMessage(),
+            errorCode.getCodeMessage(),
             exceptionMessage
         );
     }

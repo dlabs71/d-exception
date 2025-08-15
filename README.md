@@ -161,7 +161,7 @@ public class Config {
 
 * [1. Классы исключений](#section1)
     * [1.1 DException и ServiceException](#section11)
-    * [1.2 BusinessLogicServiceException](#section12)
+    * [1.2 BusinessLogicException](#section12)
     * [1.3 WithoutStacktraceServiceException](#section13)
     * [1.4 SpecialHttpStatusServiceException](#section14)
 * [2. Exception Resolver](#section2)
@@ -191,7 +191,21 @@ public class Config {
   указан явно, то при создании `ErrorResponseDto` сообщение будет взято из `ErrorCode`. В `ErrorResponseDto`
   предусмотрено отдельное поле для кода ошибки, что позволяет клиенту гибко обрабатывать ошибки.
 
-### <h3 id="section12">1.2 BusinessLogicServiceException</h3>
+В качестве сообщения может быть указан шаблон сообщения следующего вида:
+
+```
+Operation failed: {0}, {1}
+```
+
+Для передачи параметров в шаблон сообщения используется параметр конструктора (а также `build`
+методов) `Object[] codeMessageArgs`. Параметры будут подставлены в шаблон сообщения в том порядке, в котором они указаны
+в массиве.
+
+В не зависимости от того указаны ли параметры в `codeMessageArgs` или нет, при создании сообщения из предоставленного
+шаблона будет подставлен текст сообщения из базового исключения (если есть). Если `codeMessageArgs` содержит данные, то
+текст сообщения базового исключения будет подставлен в конец массива автоматически.
+
+### <h3 id="section12">1.2 BusinessLogicException</h3>
 
 `BusinessLogicException` - исключение для ошибок бизнес-логики приложения. Предназначено для информирования
 клиента о невозможности выполнить процесс. Обычно клиент отображает пользователю читаемое сообщение об ошибке. Для
@@ -262,7 +276,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.dlabs71.library.exception.DExceptionMessageService;
 import ru.dlabs71.library.exception.dto.ErrorResponseDto;
-import ru.dlabs71.library.exception.exception.BusinessLogicServiceException;
+import ru.dlabs71.library.exception.exception.BusinessLogicException;
 import ru.dlabs71.library.exception.exception.ServiceException;
 import ru.dlabs71.library.exception.exception.SpecialHttpStatusServiceException;
 import ru.dlabs71.library.exception.exception.WithoutStacktraceServiceException;
@@ -278,12 +292,12 @@ public final class SimpleHttpExceptionResolver {
         this.handler = new DHttpExceptionHandler(enableStacktrace, messageService);
     }
 
-    @ExceptionHandler({ BusinessLogicServiceException.class })
-    public ResponseEntity<ErrorResponseDto> resolveBusinessLogicException(
+    @ExceptionHandler({ BusinessLogicException.class })
+    public ResponseEntity<ErrorResponseDto> resolveBusinessException(
         HttpServletRequest request,
-        BusinessLogicServiceException exception
+        BusinessLogicException exception
     ) {
-        return this.resolveException(handler.resolveBusinessLogicException(request, exception));
+        return this.resolveException(handler.resolveBusinessException(request, exception));
     }
 
     @ExceptionHandler({ ServiceException.class })

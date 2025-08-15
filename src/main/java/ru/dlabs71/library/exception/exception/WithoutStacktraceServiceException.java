@@ -15,27 +15,40 @@ import ru.dlabs71.library.exception.type.ErrorCode;
  */
 public final class WithoutStacktraceServiceException extends ServiceException {
 
-    public WithoutStacktraceServiceException(String message, ErrorCode errorCode) {
-        super(message, errorCode);
+    public WithoutStacktraceServiceException(String message, ErrorCode errorCode, Object... codeMessageArgs) {
+        super(message, errorCode, codeMessageArgs);
     }
 
-    public WithoutStacktraceServiceException(String message, ErrorCode errorCode, @NonNull Throwable cause) {
-        super(message, errorCode, cause);
+    public WithoutStacktraceServiceException(
+        String message,
+        ErrorCode errorCode,
+        @NonNull Throwable cause,
+        Object... codeMessageArgs
+    ) {
+        super(message, errorCode, cause, codeMessageArgs);
     }
 
-    public static WithoutStacktraceServiceException build(String message) {
-        return new WithoutStacktraceServiceException(message, null);
+    public static WithoutStacktraceServiceException build(String message, Object... codeMessageArgs) {
+        return new WithoutStacktraceServiceException(message, null, codeMessageArgs);
     }
 
-    public static WithoutStacktraceServiceException build(ErrorCode errorCode) {
-        return new WithoutStacktraceServiceException(null, errorCode);
+    public static WithoutStacktraceServiceException build(ErrorCode errorCode, Object... codeMessageArgs) {
+        return new WithoutStacktraceServiceException(null, errorCode, codeMessageArgs);
     }
 
-    public static WithoutStacktraceServiceException build(String message, Throwable throwable) {
-        return new WithoutStacktraceServiceException(message, null, throwable);
+    public static WithoutStacktraceServiceException build(
+        String message,
+        Throwable throwable,
+        Object... codeMessageArgs
+    ) {
+        return new WithoutStacktraceServiceException(message, null, throwable, codeMessageArgs);
     }
 
-    public static WithoutStacktraceServiceException build(ErrorCode errorCode, Throwable throwable) {
-        return new WithoutStacktraceServiceException(null, errorCode, throwable);
+    public static WithoutStacktraceServiceException build(
+        ErrorCode errorCode,
+        Throwable throwable,
+        Object... codeMessageArgs
+    ) {
+        return new WithoutStacktraceServiceException(null, errorCode, throwable, codeMessageArgs);
     }
 }

@@ -23,9 +23,10 @@ public final class SpecialHttpStatusServiceException extends ServiceException {
     public SpecialHttpStatusServiceException(
         String message,
         ErrorCode errorCode,
-        @NonNull HttpStatus httpStatus
+        @NonNull HttpStatus httpStatus,
+        Object... codeMessageArgs
     ) {
-        super(message, errorCode);
+        super(message, errorCode, codeMessageArgs);
         this.httpStatus = httpStatus.value();
     }
 
@@ -33,18 +34,20 @@ public final class SpecialHttpStatusServiceException extends ServiceException {
         String message,
         ErrorCode errorCode,
         @NonNull Throwable cause,
-        @NonNull HttpStatus httpStatus
+        @NonNull HttpStatus httpStatus,
+        Object... codeMessageArgs
     ) {
-        super(message, errorCode, cause);
+        super(message, errorCode, cause, codeMessageArgs);
         this.httpStatus = httpStatus.value();
     }
 
     public SpecialHttpStatusServiceException(
         String message,
         ErrorCode errorCode,
-        int httpStatus
+        int httpStatus,
+        Object... codeMessageArgs
     ) {
-        super(message, errorCode);
+        super(message, errorCode, codeMessageArgs);
         this.httpStatus = httpStatus;
     }
 
@@ -52,33 +55,44 @@ public final class SpecialHttpStatusServiceException extends ServiceException {
         String message,
         ErrorCode errorCode,
         @NonNull Throwable cause,
-        int httpStatus
+        int httpStatus,
+        Object... codeMessageArgs
     ) {
-        super(message, errorCode, cause);
+        super(message, errorCode, cause, codeMessageArgs);
         this.httpStatus = httpStatus;
     }
 
-    public static SpecialHttpStatusServiceException build(String message, HttpStatus httpStatus) {
-        return new SpecialHttpStatusServiceException(message, null, httpStatus);
+    public static SpecialHttpStatusServiceException build(
+        String message,
+        HttpStatus httpStatus,
+        Object... codeMessageArgs
+    ) {
+        return new SpecialHttpStatusServiceException(message, null, httpStatus, codeMessageArgs);
     }
 
-    public static SpecialHttpStatusServiceException build(ErrorCode errorCode, HttpStatus httpStatus) {
-        return new SpecialHttpStatusServiceException(null, errorCode, httpStatus);
+    public static SpecialHttpStatusServiceException build(
+        ErrorCode errorCode,
+        HttpStatus httpStatus,
+        Object... codeMessageArgs
+    ) {
+        return new SpecialHttpStatusServiceException(null, errorCode, httpStatus, codeMessageArgs);
     }
 
     public static SpecialHttpStatusServiceException build(
         String message,
         Throwable throwable,
-        HttpStatus httpStatus
+        HttpStatus httpStatus,
+        Object... codeMessageArgs
     ) {
-        return new SpecialHttpStatusServiceException(message, null, throwable, httpStatus);
+        return new SpecialHttpStatusServiceException(message, null, throwable, httpStatus, codeMessageArgs);
     }
 
     public static SpecialHttpStatusServiceException build(
         ErrorCode errorCode,
         Throwable throwable,
-        HttpStatus httpStatus
+        HttpStatus httpStatus,
+        Object... codeMessageArgs
     ) {
-        return new SpecialHttpStatusServiceException(null, errorCode, throwable, httpStatus);
+        return new SpecialHttpStatusServiceException(null, errorCode, throwable, httpStatus, codeMessageArgs);
     }
 }

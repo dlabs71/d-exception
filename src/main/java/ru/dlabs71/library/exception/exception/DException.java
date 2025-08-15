@@ -18,4 +18,6 @@ public interface DException {
     ErrorCode getErrorCode();
 
     String getCauseExceptionMessage();
+
+    Object[] getCodeMessageArgs();
 }
