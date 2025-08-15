@@ -5,7 +5,7 @@ import ru.dlabs71.library.exception.type.ErrorCode;
 /**
  * Common interface for exception classes. All your exceptions must implement this.
  *
- * <p><div><strong>Project name:</strong> d-exception </div>
+ * <br><br><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
  *
  * @author Ivanov Danila

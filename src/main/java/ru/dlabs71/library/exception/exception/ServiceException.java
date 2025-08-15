@@ -13,7 +13,7 @@ import ru.dlabs71.library.exception.type.ErrorCode;
  * <p>{@link SpecialHttpStatusServiceException}, {@link WithoutStacktraceServiceException},
  * {@link BusinessLogicException}
  *
- * <p><div><strong>Project name:</strong> d-exception </div>
+ * <br><br><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
  *
  * @author Ivanov Danila
@@ -56,7 +56,8 @@ public class ServiceException extends RuntimeException implements DException {
      * @param errorCode       special error code. It can be replacement for the message
      *                        or an extra info field in an HTTP response body for client.
      * @param cause           a throwable object - cause of exception
-     * @param codeMessageArgs parameters for substitution in the message template from the error code or message parameters.
+     * @param codeMessageArgs parameters for substitution in the message template from the error code
+     *                        or message parameters.
      */
     public ServiceException(String message, ErrorCode errorCode, @NonNull Throwable cause, Object... codeMessageArgs) {
         super(message == null ? errorCode == null ? null : errorCode.name() : message, cause);

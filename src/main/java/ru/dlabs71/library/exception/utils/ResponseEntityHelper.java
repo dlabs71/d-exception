@@ -13,7 +13,7 @@ import ru.dlabs71.library.exception.type.ErrorCode;
 /**
  * Helper class for creating HTTP response.
  *
- * <p><div><strong>Project name:</strong> d-exception </div>
+ * <br><br><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
  *
  * @author Ivanov Danila
@@ -122,12 +122,15 @@ public final class ResponseEntityHelper {
      * @param errorCode        error code. If the message isn't passed then message will be acquired by
      *                         the code associated with a value of the error code.
      * @param exceptionMessage message from cause exception
-     * @param codeMessageArgs  parameters for substitution in the message template from the error code or message parameters.
+     * @param codeMessageArgs  parameters for substitution in the message template from the error code
+     *                         or message parameters.
      *
      * @return The message will be determined in the following order:
      *     1) If the errorCode is specified, the message will be retrieved using the message code.
-     *     2) If the errorCode is not specified but a message is provided, the message will be taken from the message parameter.
-     *     3) If neither errorCode nor message is specified, the message will be taken from the exceptionMessage parameter.
+     *     2) If the errorCode is not specified but a message is provided,
+     *     the message will be taken from the message parameter.
+     *     3) If neither errorCode nor message is specified, the message will be taken
+     *     from the exceptionMessage parameter.
      */
     public String acquireMessage(
         String message,

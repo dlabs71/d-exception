@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * Error codes which is supplied the library.
  *
- * <p><div><strong>Project name:</strong> d-exception </div>
+ * <br><br><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
  *
  * @author Ivanov Danila

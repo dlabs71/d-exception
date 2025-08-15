@@ -16,7 +16,7 @@ import ru.dlabs71.library.exception.type.ErrorLevel;
  *
  * <p>You should specify {@link ErrorCode}. It can be used to specify a text message.
  *
- * <p><div><strong>Project name:</strong> d-exception </div>
+ * <br><br><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
  *
  * @author Ivanov Danila
@@ -32,12 +32,14 @@ public class BusinessLogicException extends ServiceException {
     /**
      * Constructor of the class.
      *
-     * @param errorCode error code.
-     *                  See documentation to the {@linkplain ServiceException#ServiceException(String, ErrorCode)}
-     * @param level     a specific error level. If the level is null,
-     *                  then it will be assigned a {@link CommonErrorLevel#ERROR} value.
-     * @param data      extra data for HTTP response
-     * @param cause     a throwable object - cause of exception
+     * @param errorCode       error code.
+     *                        See documentation to the
+     *                        {@linkplain ServiceException#ServiceException(String, ErrorCode, Object...)}
+     * @param level           a specific error level. If the level is null,
+     *                        then it will be assigned a {@link CommonErrorLevel#ERROR} value.
+     * @param data            extra data for HTTP response
+     * @param cause           a throwable object - cause of exception
+     * @param codeMessageArgs parameters for substitution in the message template from the error code.
      */
     public BusinessLogicException(
         ErrorCode errorCode,
@@ -55,7 +57,8 @@ public class BusinessLogicException extends ServiceException {
      * Constructor of the class.
      *
      * @param errorCode       error code.
-     *                        See documentation to the {@linkplain ServiceException#ServiceException(String, ErrorCode)}
+     *                        See documentation to the
+     *                        {@linkplain ServiceException#ServiceException(String, ErrorCode, Object...)}
      * @param level           a specific error level. If the level is null,
      *                        then it will be assigned a {@link CommonErrorLevel#ERROR} value.
      * @param data            extra data for HTTP response
@@ -93,6 +96,9 @@ public class BusinessLogicException extends ServiceException {
         return new BusinessLogicException(errorCode, errorLevel, null, throwable, codeMessageArgs);
     }
 
+    /**
+     * This method is not supported in BusinessLogicException.
+     */
     public static ServiceException build(String message, Object... codeMessageArgs) {
         throw new UnsupportedOperationException(
             "The string message is not supported in BusinessLogicException. "
@@ -100,6 +106,9 @@ public class BusinessLogicException extends ServiceException {
         );
     }
 
+    /**
+     * This method is not supported in BusinessLogicException.
+     */
     public static ServiceException build(String message, Throwable throwable, Object... codeMessageArgs) {
         throw new UnsupportedOperationException(
             "The string message is not supported in BusinessLogicException. "
