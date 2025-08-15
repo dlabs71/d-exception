@@ -121,30 +121,33 @@ public final class ResponseEntityHelper {
      *                         the code associated with a value of the error code.
      * @param exceptionMessage message from cause exception
      *
-     * @return if the message is null or empty then message will be acquired by the error code.
-     *     If error code is null then message will be equal with the exceptionMessage.
+     * @return The message will be determined in the following order:
+     *     1) If the errorCode is specified, the message will be retrieved using the message code.
+     *     2) If the errorCode is not specified but a message is provided, the message will be taken from the message parameter.
+     *     3) If neither errorCode nor message is specified, the message will be taken from the exceptionMessage parameter.
      */
     public String acquireMessage(String message, ErrorCode errorCode, String exceptionMessage) {
-        if (message == null || message.isEmpty()) {
-            if (errorCode == null) {
-                return messageService.getMessage(
-                    CommonErrorCode.COMMON_EXCEPTION.getCodeMessage(),
-                    exceptionMessage
-                );
-            } else {
-                return messageService.getMessage(
-                    errorCode.getCodeMessage(),
-                    exceptionMessage
-                );
-            }
-        } else {
+        if (errorCode != null && errorCode.getCodeMessage() != null) {
+            return messageService.getMessage(
+                errorCode.getCodeMessage(),
+                exceptionMessage
+            );
+        }
+
+        if (message != null && !message.isEmpty()) {
             if (message.startsWith("$")) {
                 return messageService.getMessage(
                     message.substring(1),
                     exceptionMessage
                 );
+            } else {
+                return message;
             }
         }
-        return message;
+
+        return messageService.getMessage(
+            CommonErrorCode.COMMON_EXCEPTION.getCodeMessage(),
+            exceptionMessage
+        );
     }
 }
