@@ -10,10 +10,10 @@ import ru.dlabs71.library.exception.type.ErrorCode;
  * It is usually ancestor for user-defined exception classes. This exception contains a normal text message
  * and error code. When message is not passed value the message will retrieve from errorCode (if it is specified).
  *
- * <p>{@link BusinessLogicServiceException}, {@link SpecialHttpStatusServiceException},
- * {@link WithoutStacktraceServiceException}, {@link BusinessLogicException}
+ * <p>{@link SpecialHttpStatusServiceException}, {@link WithoutStacktraceServiceException},
+ * {@link BusinessLogicException}
  *
- * <p><div><strong>Project name:</strong> d-exception </div>
+ * <br><br><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
  *
  * @author Ivanov Danila
@@ -23,60 +23,66 @@ import ru.dlabs71.library.exception.type.ErrorCode;
 @Setter
 public class ServiceException extends RuntimeException implements DException {
 
-    private String message;
-    private ErrorCode errorCode;
+    private final String message;
+    private final ErrorCode errorCode;
+    private final Object[] codeMessageArgs;
 
     /**
      * Constructor of the class.
      *
-     * @param message   a message explain cause of an exception.
-     * @param errorCode special error code. It can be replacement for the message
-     *                  or an extra info field in an HTTP response body for client.
+     * @param message         a message explain cause of an exception.
+     * @param errorCode       special error code. It can be replacement for the message
+     *                        or an extra info field in an HTTP response body for client.
+     * @param codeMessageArgs parameters for substitution in the message template from the error code.
      */
-    public ServiceException(String message, ErrorCode errorCode) {
+    public ServiceException(String message, ErrorCode errorCode, Object... codeMessageArgs) {
         super(message == null ? errorCode == null ? null : errorCode.name() : message);
         if (message == null && errorCode == null) {
             throw new IllegalArgumentException("d.Message and ErrorCode are both null");
         }
         this.errorCode = errorCode;
         this.message = message;
+        this.codeMessageArgs = codeMessageArgs;
     }
 
     /**
      * Constructor of the class.
      *
-     * @param message   a message explain cause of an exception. If it starts with '$' then the method
-     *                  tries to get message from the messageService by a code.
-     *                  <br>For example:
-     *                  <br>If message = "Hello" then output is "Hello"
-     *                  <br>If message = "$code.greeting" then output is message by the code "code.greeting"
-     * @param errorCode special error code. It can be replacement for the message
-     *                  or an extra info field in an HTTP response body for client.
-     * @param cause     a throwable object - cause of exception
+     * @param message         a message explain cause of an exception. If it starts with '$' then the method
+     *                        tries to get message from the messageService by a code.
+     *                        <br>For example:
+     *                        <br>If message = "Hello" then output is "Hello"
+     *                        <br>If message = "$code.greeting" then output is message by the code "code.greeting"
+     * @param errorCode       special error code. It can be replacement for the message
+     *                        or an extra info field in an HTTP response body for client.
+     * @param cause           a throwable object - cause of exception
+     * @param codeMessageArgs parameters for substitution in the message template from the error code
+     *                        or message parameters.
      */
-    public ServiceException(String message, ErrorCode errorCode, @NonNull Throwable cause) {
+    public ServiceException(String message, ErrorCode errorCode, @NonNull Throwable cause, Object... codeMessageArgs) {
         super(message == null ? errorCode == null ? null : errorCode.name() : message, cause);
         if (message == null && errorCode == null) {
             throw new IllegalArgumentException("d.Message and ErrorCode are both null");
         }
         this.errorCode = errorCode;
         this.message = message;
+        this.codeMessageArgs = codeMessageArgs;
     }
 
-    public static ServiceException build(String message) {
-        return new ServiceException(message, null);
+    public static ServiceException build(String message, Object... codeMessageArgs) {
+        return new ServiceException(message, null, codeMessageArgs);
     }
 
-    public static ServiceException build(ErrorCode errorCode) {
-        return new ServiceException(null, errorCode);
+    public static ServiceException build(ErrorCode errorCode, Object... codeMessageArgs) {
+        return new ServiceException(null, errorCode, codeMessageArgs);
     }
 
-    public static ServiceException build(String message, Throwable throwable) {
-        return new ServiceException(message, null, throwable);
+    public static ServiceException build(String message, Throwable throwable, Object... codeMessageArgs) {
+        return new ServiceException(message, null, throwable, codeMessageArgs);
     }
 
-    public static ServiceException build(ErrorCode errorCode, Throwable throwable) {
-        return new ServiceException(null, errorCode, throwable);
+    public static ServiceException build(ErrorCode errorCode, Throwable throwable, Object... codeMessageArgs) {
+        return new ServiceException(null, errorCode, throwable, codeMessageArgs);
     }
 
     @Override

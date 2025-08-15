@@ -16,7 +16,7 @@ import ru.dlabs71.library.exception.type.ErrorLevel;
  *
  * <p>You should specify {@link ErrorCode}. It can be used to specify a text message.
  *
- * <p><div><strong>Project name:</strong> d-exception </div>
+ * <br><br><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
  *
  * @author Ivanov Danila
@@ -26,26 +26,29 @@ import ru.dlabs71.library.exception.type.ErrorLevel;
 @Setter
 public class BusinessLogicException extends ServiceException {
 
-    private ErrorLevel level;
-    private Serializable data;
+    private final ErrorLevel level;
+    private final Serializable data;
 
     /**
      * Constructor of the class.
      *
-     * @param errorCode error code.
-     *                  See documentation to the {@linkplain ServiceException#ServiceException(String, ErrorCode)}
-     * @param level     a specific error level. If the level is null,
-     *                  then it will be assigned a {@link CommonErrorLevel#ERROR} value.
-     * @param data      extra data for HTTP response
-     * @param cause     a throwable object - cause of exception
+     * @param errorCode       error code.
+     *                        See documentation to the
+     *                        {@linkplain ServiceException#ServiceException(String, ErrorCode, Object...)}
+     * @param level           a specific error level. If the level is null,
+     *                        then it will be assigned a {@link CommonErrorLevel#ERROR} value.
+     * @param data            extra data for HTTP response
+     * @param cause           a throwable object - cause of exception
+     * @param codeMessageArgs parameters for substitution in the message template from the error code.
      */
     public BusinessLogicException(
         ErrorCode errorCode,
         ErrorLevel level,
         Serializable data,
-        @NonNull Throwable cause
+        @NonNull Throwable cause,
+        Object... codeMessageArgs
     ) {
-        super(errorCode.name(), errorCode, cause);
+        super(errorCode.name(), errorCode, cause, codeMessageArgs);
         this.level = level != null ? level : CommonErrorLevel.ERROR;
         this.data = data;
     }
@@ -53,46 +56,60 @@ public class BusinessLogicException extends ServiceException {
     /**
      * Constructor of the class.
      *
-     * @param errorCode error code.
-     *                  See documentation to the {@linkplain ServiceException#ServiceException(String, ErrorCode)}
-     * @param level     a specific error level. If the level is null,
-     *                  then it will be assigned a {@link CommonErrorLevel#ERROR} value.
-     * @param data      extra data for HTTP response
+     * @param errorCode       error code.
+     *                        See documentation to the
+     *                        {@linkplain ServiceException#ServiceException(String, ErrorCode, Object...)}
+     * @param level           a specific error level. If the level is null,
+     *                        then it will be assigned a {@link CommonErrorLevel#ERROR} value.
+     * @param data            extra data for HTTP response
+     * @param codeMessageArgs parameters for substitution in the message template from the error code.
      */
     public BusinessLogicException(
         ErrorCode errorCode,
         ErrorLevel level,
-        Serializable data
+        Serializable data,
+        Object... codeMessageArgs
     ) {
-        super(errorCode.name(), errorCode);
+        super(errorCode.name(), errorCode, codeMessageArgs);
         this.level = level != null ? level : CommonErrorLevel.ERROR;
         this.data = data;
     }
 
-    public static BusinessLogicException build(ErrorCode errorCode) {
-        return new BusinessLogicException(errorCode, null, null);
+    public static BusinessLogicException build(ErrorCode errorCode, Object... codeMessageArgs) {
+        return new BusinessLogicException(errorCode, null, null, codeMessageArgs);
     }
 
-    public static BusinessLogicException build(ErrorCode errorCode, Throwable throwable) {
-        return new BusinessLogicException(errorCode, null, null, throwable);
+    public static BusinessLogicException build(ErrorCode errorCode, Throwable throwable, Object... codeMessageArgs) {
+        return new BusinessLogicException(errorCode, null, null, throwable, codeMessageArgs);
     }
 
-    public static BusinessLogicException build(ErrorCode errorCode, ErrorLevel errorLevel) {
-        return new BusinessLogicException(errorCode, errorLevel, null);
+    public static BusinessLogicException build(ErrorCode errorCode, ErrorLevel errorLevel, Object... codeMessageArgs) {
+        return new BusinessLogicException(errorCode, errorLevel, null, codeMessageArgs);
     }
 
-    public static BusinessLogicException build(ErrorCode errorCode, ErrorLevel errorLevel, Throwable throwable) {
-        return new BusinessLogicException(errorCode, errorLevel, null, throwable);
+    public static BusinessLogicException build(
+        ErrorCode errorCode,
+        ErrorLevel errorLevel,
+        Throwable throwable,
+        Object... codeMessageArgs
+    ) {
+        return new BusinessLogicException(errorCode, errorLevel, null, throwable, codeMessageArgs);
     }
 
-    public static ServiceException build(String message) {
+    /**
+     * This method is not supported in BusinessLogicException.
+     */
+    public static ServiceException build(String message, Object... codeMessageArgs) {
         throw new UnsupportedOperationException(
             "The string message is not supported in BusinessLogicException. "
             + "Please use ErrorCode to specify the message."
         );
     }
 
-    public static ServiceException build(String message, Throwable throwable) {
+    /**
+     * This method is not supported in BusinessLogicException.
+     */
+    public static ServiceException build(String message, Throwable throwable, Object... codeMessageArgs) {
         throw new UnsupportedOperationException(
             "The string message is not supported in BusinessLogicException. "
             + "Please use ErrorCode to specify the message."
