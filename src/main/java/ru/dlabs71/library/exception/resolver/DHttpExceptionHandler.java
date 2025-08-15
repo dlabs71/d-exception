@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import ru.dlabs71.library.exception.DExceptionMessageService;
 import ru.dlabs71.library.exception.dto.ErrorResponseDto;
 import ru.dlabs71.library.exception.exception.BusinessLogicException;
-import ru.dlabs71.library.exception.exception.BusinessLogicServiceException;
 import ru.dlabs71.library.exception.exception.ServiceException;
 import ru.dlabs71.library.exception.exception.SpecialHttpStatusServiceException;
 import ru.dlabs71.library.exception.exception.WithoutStacktraceServiceException;
@@ -25,7 +24,7 @@ import ru.dlabs71.library.exception.utils.ResponseEntityHelper;
  *
  * <p>Utilize this class in your HTTP exception resolver following the composition tenet.
  *
- * <p><div><strong>Project name:</strong> d-exception </div>
+ * <br><br><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2025-02-25 </div>
  *
  * @author Ivanov Danila
@@ -77,55 +76,19 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveBusinessLogicException(
-        HttpServletRequest request,
-        BusinessLogicServiceException exception
+        HttpServletRequest request, BusinessLogicException exception
     ) {
         logRequestException(request, exception);
 
         String message = responseEntityHelper.acquireMessage(exception);
-        return new DHttpResponse(
-            DHttpStatus.INTERNAL_SERVER_ERROR.getValue(),
-            ErrorResponseDto.builder()
-                .informative(true)
-                .errorCode(exception.getErrorCode())
-                .data(exception.getData())
-                .level(exception.getLevel())
-                .message(message)
-                .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
-                .build()
-        );
-    }
-
-    /**
-     * Handles a business logic exception, typically including a detailed response body for the client.
-     *
-     * @param request   The HTTP request that caused the exception.
-     * @param exception The business logic exception to handle.
-     *
-     * @return A {@link DHttpResponse} containing an {@link ErrorResponseDto} as the response body.
-     *     <ul>
-     *         <li>HTTP status: 500 (Internal Server Error)</li>
-     *         <li>Informative: true</li>
-     *     </ul>
-     */
-    public DHttpResponse resolveBusinessLogicException(
-        HttpServletRequest request,
-        BusinessLogicException exception
-    ) {
-        logRequestException(request, exception);
-
-        String message = responseEntityHelper.acquireMessage(exception);
-        return new DHttpResponse(
-            DHttpStatus.INTERNAL_SERVER_ERROR.getValue(),
-            ErrorResponseDto.builder()
-                .informative(true)
-                .errorCode(exception.getErrorCode())
-                .data(exception.getData())
-                .level(exception.getLevel())
-                .message(message)
-                .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
-                .build()
-        );
+        return new DHttpResponse(DHttpStatus.INTERNAL_SERVER_ERROR.getValue(), ErrorResponseDto.builder()
+            .informative(true)
+            .errorCode(exception.getErrorCode())
+            .data(exception.getData())
+            .level(exception.getLevel())
+            .message(message)
+            .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
+            .build());
     }
 
     /**
@@ -141,21 +104,17 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveServiceException(
-        HttpServletRequest request,
-        ServiceException exception
+        HttpServletRequest request, ServiceException exception
     ) {
         logRequestException(request, exception);
 
         String message = responseEntityHelper.acquireMessage(exception);
-        return new DHttpResponse(
-            DHttpStatus.INTERNAL_SERVER_ERROR.getValue(),
-            ErrorResponseDto.builder()
-                .informative(false)
-                .errorCode(exception.getErrorCode())
-                .message(message)
-                .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
-                .build()
-        );
+        return new DHttpResponse(DHttpStatus.INTERNAL_SERVER_ERROR.getValue(), ErrorResponseDto.builder()
+            .informative(false)
+            .errorCode(exception.getErrorCode())
+            .message(message)
+            .stacktrace(enableStacktrace ? exception.getStackTrace() : null)
+            .build());
     }
 
     /**
@@ -171,21 +130,13 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveServiceException(
-        HttpServletRequest request,
-        WithoutStacktraceServiceException exception
+        HttpServletRequest request, WithoutStacktraceServiceException exception
     ) {
         logRequestException(request, exception);
 
         String message = responseEntityHelper.acquireMessage(exception);
-        return new DHttpResponse(
-            DHttpStatus.INTERNAL_SERVER_ERROR.getValue(),
-            ErrorResponseDto.builder()
-                .informative(false)
-                .errorCode(exception.getErrorCode())
-                .message(message)
-                .stacktrace(null)
-                .build()
-        );
+        return new DHttpResponse(DHttpStatus.INTERNAL_SERVER_ERROR.getValue(), ErrorResponseDto.builder().informative(
+            false).errorCode(exception.getErrorCode()).message(message).stacktrace(null).build());
     }
 
     /**
@@ -201,8 +152,7 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveServiceException(
-        HttpServletRequest request,
-        SpecialHttpStatusServiceException exception
+        HttpServletRequest request, SpecialHttpStatusServiceException exception
     ) {
         logRequestException(request, exception);
 
@@ -286,8 +236,7 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveAccessDeniedException(
-        HttpServletRequest request,
-        Exception exception
+        HttpServletRequest request, Exception exception
     ) {
         logRequestException(request, exception);
         return responseEntityHelper.buildResponse(
@@ -312,8 +261,7 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveFileNotFoundException(
-        HttpServletRequest request,
-        Exception exception
+        HttpServletRequest request, Exception exception
     ) {
         logRequestException(request, exception);
         return responseEntityHelper.buildResponse(
@@ -338,8 +286,7 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveIOException(
-        HttpServletRequest request,
-        IOException exception
+        HttpServletRequest request, IOException exception
     ) {
         return this.resolveDefaultException(request, CommonErrorCode.IO_EXCEPTION, exception);
     }
@@ -358,8 +305,7 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveAssertationError(
-        HttpServletRequest request,
-        AssertionError error
+        HttpServletRequest request, AssertionError error
     ) {
         return this.resolveDefaultException(request, CommonErrorCode.VALIDATION_EXCEPTION, error);
     }
@@ -378,8 +324,7 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveDefaultException(
-        HttpServletRequest request,
-        Throwable throwable
+        HttpServletRequest request, Throwable throwable
     ) {
         logRequestException(request, throwable);
         return responseEntityHelper.buildResponse500(CommonErrorCode.COMMON_EXCEPTION, throwable, enableStacktrace);
@@ -400,9 +345,7 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveDefaultException(
-        HttpServletRequest request,
-        ErrorCode errorCode,
-        Throwable throwable
+        HttpServletRequest request, ErrorCode errorCode, Throwable throwable
     ) {
         logRequestException(request, throwable);
         return responseEntityHelper.buildResponse500(errorCode, throwable, enableStacktrace);
@@ -425,11 +368,7 @@ public final class DHttpExceptionHandler {
      *     </ul>
      */
     public DHttpResponse resolveDefaultException(
-        HttpServletRequest request,
-        ErrorCode errorCode,
-        int status,
-        Throwable throwable,
-        boolean withStacktrace
+        HttpServletRequest request, ErrorCode errorCode, int status, Throwable throwable, boolean withStacktrace
     ) {
         logRequestException(request, throwable);
         return responseEntityHelper.buildResponse(errorCode, status, throwable, withStacktrace);
@@ -442,7 +381,7 @@ public final class DHttpExceptionHandler {
      * @param throwable The exception to log.
      */
     private void logRequestException(HttpServletRequest request, Throwable throwable) {
-        log.debug("d.Unexpected exception processing request: {}", request.getRequestURI());
-        log.error(String.format("d.Request exception: %s", throwable.getMessage()), throwable);
+        log.debug("Unexpected exception processing request: {}", request.getRequestURI());
+        log.error(String.format("Request exception: %s", throwable.getMessage()), throwable);
     }
 }

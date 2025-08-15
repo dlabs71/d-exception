@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Error code is entity for describe an exception in type-save manner. It contains code of text message and name.
  *
- * <p><div><strong>Project name:</strong> d-exception </div>
+ * <br><br><div><strong>Project name:</strong> d-exception </div>
  * <div><strong>Creation date:</strong> 2024-08-24 </div>
  *
  * @author Ivanov Danila
